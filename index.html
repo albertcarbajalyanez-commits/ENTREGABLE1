@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BarberShop Style | Barbería y Tienda Online</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: #000000;
+    background-color: #ffffff;
+    line-height: 1.5;
+}
+
+/* Header */
+.header {
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 20px 0;
+    transition: all 0.3s ease;
+}
+
+.header-scrolled {
+    background: #000000;
+    position: fixed;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo img {
+    width: 110px;
+    height: auto;
+}
+
+.nav-menu ul {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
+
+.nav-menu a {
+    text-decoration: none;
+    color: #ffffff;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-menu a:hover {
+    color: #fc5f5f;
+}
+
+.social-header {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.social-header a {
+    color: white;
+    font-size: 18px;
+    transition: color 0.3s;
+}
+
+.social-header a:hover {
+    color: #fc5f5f;
+}
+
+.cart-icon {
+    position: relative;
+    color: white;
+    font-size: 24px;
+    margin-left: 20px;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.cart-icon:hover {
+    color: #fc7978;
+}
+
+.cart-count {
+    position: absolute;
+    top: -10px;
+    right: -12px;
+    background: #fc5f5f;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+}
+
+.cart-count.bounce {
+    animation: cartBounce 0.4s ease;
+}
+
+@keyframes cartBounce {
+    0%  { transform: scale(1); }
+    50% { transform: scale(1.5); }
+    100%{ transform: scale(1); }
+}
+
+/* ===== CART SIDEBAR ===== */
+.cart-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 900;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.cart-overlay.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.cart-sidebar {
+    position: fixed;
+    top: 0;
+    right: -420px;
+    width: 400px;
+    max-width: 100vw;
+    height: 100vh;
+    background: #fff;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: -5px 0 30px rgba(0,0,0,0.15);
+}
+
+.cart-sidebar.open {
+    right: 0;
+}
+
+.cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    border-bottom: 1px solid #eee;
+    background: #1a1a1a;
+    color: white;
+}
+
+.cart-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.cart-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.cart-close:hover { color: #fc7978; }
+
+.cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 25px;
+}
+
+.cart-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #aaa;
+}
+
+.cart-empty i {
+    font-size: 60px;
+    margin-bottom: 15px;
+    display: block;
+    color: #ddd;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f0f0;
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+.cart-item-img {
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.cart-item-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.cart-item-info {
+    flex: 1;
+}
+
+.cart-item-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.cart-item-info .cart-item-cat {
+    font-size: 11px;
+    color: #fc7978;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.qty-btn {
+    width: 26px;
+    height: 26px;
+    border: 1px solid #ddd;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.qty-btn:hover {
+    background: #fc7978;
+    border-color: #fc7978;
+    color: white;
+}
+
+.qty-display {
+    font-weight: 600;
+    min-width: 20px;
+    text-align: center;
+}
+
+.cart-item-price {
+    font-weight: 700;
+    color: #fc7978;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+
+.cart-remove {
+    background: none;
+    border: none;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0;
+    transition: color 0.2s;
+    flex-shrink: 0;
+}
+
+.cart-remove:hover { color: #e74c3c; }
+
+.cart-footer {
+    padding: 20px 25px;
+    border-top: 1px solid #eee;
+    background: #f8f9fa;
+}
+
+.cart-subtotal {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #666;
+}
+
+.cart-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    padding-top: 10px;
+    border-top: 2px solid #eee;
+}
+
+.cart-total span:last-child {
+    color: #fc7978;
+}
+
+.btn-checkout {
+    width: 100%;
+    background: #1a1a1a;
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: background 0.3s;
+}
+
+.btn-checkout:hover { background: #fc7978; }
+
+.btn-clear-cart {
+    width: 100%;
+    background: transparent;
+    color: #999;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: all 0.2s;
+}
+
+.btn-clear-cart:hover { border-color: #e74c3c; color: #e74c3c; }
+
+/* Add to cart button on product cards */
+.product-image {
+    position: relative;
+    overflow: hidden;
+    height: 250px;
+    cursor: pointer;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.05);
+}
+
+.add-cart-overlay {
+    position: absolute;
+    bottom: -50px;
+    left: 0;
+    right: 0;
+    background: rgba(252, 121, 120, 0.92);
+    color: white;
+    text-align: center;
+    padding: 14px;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1px;
+    transition: bottom 0.3s ease;
+    cursor: pointer;
+}
+
+.product-image:hover .add-cart-overlay {
+    bottom: 0;
+}
+
+.add-cart-overlay i {
+    margin-right: 8px;
+}
+
+/* Toast notification */
+.toast {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #1a1a1a;
+    color: white;
+    padding: 14px 22px;
+    border-radius: 12px;
+    font-size: 14px;
+    z-index: 2000;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.toast i { color: #fc7978; }
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    min-height: 600px;
+    background-image: url('https://images.pexels.com/photos/3998428/pexels-photo-3998428.jpeg?auto=compress&cs=tinysrgb&w=1600');
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+}
+
+.hero-title {
+    font-size: 64px;
+    font-weight: 700;
+    margin-bottom: 30px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 16px 32px;
+    background: #fc7978;
+    color: white;
+    text-decoration: none;
+    border-radius: 50px;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 2px;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background: #fc5f5f;
+    color: white;
+}
+
+/* Features Section */
+.features {
+    padding: 60px 0;
+    background: #f8f9fa;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+}
+
+.feature-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.feature-icon {
+    width: 70px;
+    height: 70px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #fc7978;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+}
+
+.feature-info h3 { font-size: 20px; margin-bottom: 5px; }
+.feature-info p  { color: #666; font-size: 14px; }
+
+/* Categories Section */
+.categories { padding: 80px 0; }
+
+.section-title {
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 15px;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 50px;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.category-card {
+    position: relative;
+    height: 400px;
+    border-radius: 15px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.category-card:hover { transform: translateY(-5px); }
+.category-card img { width: 100%; height: 100%; object-fit: cover; }
+
+.category-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    padding: 30px;
+    color: white;
+    text-align: center;
+}
+
+.category-overlay h3 { font-size: 28px; margin-bottom: 10px; }
+
+.category-btn {
+    margin-top: 15px;
+    background: rgba(255,255,255,0.2);
+    padding: 10px 25px;
+    border-radius: 50px;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    display: inline-block;
+    transition: all 0.3s;
+}
+
+.category-btn:hover { background: #fc7978; }
+
+/* Products Section */
+.products {
+    padding: 80px 0;
+    background: #f8f9fa;
+}
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.product-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    transition: transform 0.3s;
+}
+
+.product-card:hover { transform: translateY(-5px); }
+
+.badge {
+    position: absolute;
+    top: 10px; left: 10px;
+    background: #fc7978;
+    color: white;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.product-info { padding: 20px; }
+
+.product-category {
+    font-size: 12px;
+    color: #fc7978;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.product-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.product-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fc7978;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+/* Accessories Section */
+.accessories { padding: 80px 0; }
+
+.accessories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.accessory-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    text-align: center;
+    padding: 25px;
+    transition: transform 0.3s;
+}
+
+.accessory-card:hover { transform: translateY(-5px); }
+
+.accessory-img {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.accessory-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.accessory-icon {
+    font-size: 50px;
+    color: #fc7978;
+    margin-bottom: 15px;
+}
+
+.accessory-card h3 { font-size: 18px; margin-bottom: 10px; }
+.accessory-card p  { color: #666; font-size: 14px; margin-bottom: 15px; }
+
+.btn-add-acc {
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 100%;
+}
+.btn-add-acc:hover { background: #fc7978; }
+.btn-add-acc i { margin-right: 6px; }
+
+/* Reservation Section */
+.reservation {
+    padding: 80px 0;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: white;
+}
+
+.reservation-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: start;
+}
+
+.reservation-info h2 { font-size: 36px; margin-bottom: 20px; }
+.reservation-info p  { color: #ccc; margin-bottom: 30px; }
+
+.service-list { list-style: none; }
+
+.service-list li {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.service-list i { color: #fc7978; font-size: 20px; }
+
+.reservation-form {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    color: #333;
+}
+
+.form-group { margin-bottom: 20px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #fc7978;
+    box-shadow: 0 0 5px rgba(252,121,120,0.3);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.btn-reserve {
+    width: 100%;
+    background: #fc7978;
+    color: white;
+    padding: 14px;
+    font-size: 16px;
+}
+
+.btn-reserve:hover { background: #fc5f5f; }
+
+/* Success & Error Messages */
+.success-message {
+    background: #4CAF50;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    display: none;
+}
+
+.error-message {
+    background: #e74c3c;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    display: none;
+}
+
+.sending-message {
+    background: #3498db;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    display: none;
+}
+
+
+/* Social Footer */
+.social-footer {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+    margin-top: 20px;
+}
+
+.social-footer a {
+    width: 45px;
+    height: 45px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 22px;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.social-footer a:hover {
+    background: #fc7978;
+    transform: translateY(-3px);
+}
+
+/* Footer */
+.footer {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 60px 0 20px;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer h4 { font-size: 18px; margin-bottom: 20px; color: #fc7978; }
+.footer p  { color: #aaa; line-height: 1.6; }
+
+.footer-logo { width: 100px; margin-bottom: 15px; }
+
+.footer-links { list-style: none; }
+.footer-links li { margin-bottom: 12px; }
+.footer-links a { color: #aaa; text-decoration: none; transition: color 0.3s; }
+.footer-links a:hover { color: #fc7978; }
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+    color: #666;
+    font-size: 14px;
+}
+
+/* Gallery Section */
+.gallery {
+    padding: 80px 0;
+    background: #f8f9fa;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    height: 250px;
+    cursor: pointer;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.gallery-item:hover img { transform: scale(1.1); }
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    transform: translateY(100%);
+    transition: transform 0.3s;
+}
+
+.gallery-item:hover .gallery-overlay { transform: translateY(0); }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .products-grid, .accessories-grid, .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+    .features-grid, .categories-grid, .footer-grid, .reservation-container { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .hero-title { font-size: 40px; }
+    .products-grid, .accessories-grid, .gallery-grid { grid-template-columns: 1fr; }
+    .features-grid, .categories-grid, .footer-grid, .reservation-container { grid-template-columns: 1fr; }
+    .nav-menu, .social-header { display: none; }
+    .feature-card { flex-direction: column; text-align: center; }
+    .form-row { grid-template-columns: 1fr; }
+    .cart-sidebar { width: 100vw; }
+}
+
+/* WhatsApp Float Button */
+.whatsapp-float {
+    position: fixed;
+    bottom: 20px; left: 20px;
+    background: #25D366;
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 30px;
+    text-decoration: none;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+    z-index: 500;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1);
+    background: #128C7E;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.product-card, .accessory-card, .gallery-item { animation: fadeIn 0.6s ease-out; }
+
+/* Spinner */
+.spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- Cart Overlay -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+
+<!-- Cart Sidebar -->
+<div class="cart-sidebar" id="cartSidebar">
+    <div class="cart-header">
+        <h3><i class="fas fa-shopping-cart" style="margin-right:10px;color:#fc7978"></i>Mi Carrito</h3>
+        <button class="cart-close" onclick="closeCart()">&times;</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+        <div class="cart-empty" id="cartEmpty">
+            <i class="fas fa-shopping-bag"></i>
+            <p>Tu carrito está vacío</p>
+        </div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none">
+        <div class="cart-subtotal">
+            <span>Subtotal (<span id="cartItemCount">0</span> productos)</span>
+            <span>S/ <span id="cartSubtotal">0.00</span></span>
+        </div>
+        <div class="cart-total">
+            <span>Total</span>
+            <span>S/ <span id="cartTotalAmount">0.00</span></span>
+        </div>
+        <button class="btn-checkout" onclick="proceedCheckout()">
+            <i class="fas fa-lock" style="margin-right:8px"></i>PROCEDER AL PAGO
+        </button>
+        <button class="btn-clear-cart" onclick="clearCart()">Vaciar carrito</button>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg">Producto agregado al carrito</span>
+</div>
+
+<!-- Header -->
+<header class="header" id="header">
+    <div class="container header-container">
+        <div class="logo">
+            <img src="FOTOS/barber shop.jfif" alt="Logo Perú Style">
+        </div>
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="#">TIENDA</a></li>
+                <li><a href="#">BARBERÍA</a></li>
+                <li><a href="#reservation">RESERVAS</a></li>
+                <li><a href="#accessories">ACCESORIOS</a></li>
+                <li><a href="#gallery">GALERÍA</a></li>
+                <li><a href="#">CONTACTO</a></li>
+            </ul>
+        </nav>
+        <div class="social-header">
+            <a href="https://api.whatsapp.com/send/?phone=51946276308&text&type=phone_number&app_absent=0" target="_blank"><i class="fab fa-tiktok"></i></a>
+            <a href="https://www.instagram.com/barber/" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/ArteliBarberShop" target="_blank"><i class="fab fa-facebook-f"></i></a>
+        </div>
+        <div class="cart-icon" onclick="openCart()">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count" id="headerCartCount">0</span>
+        </div>
+    </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <p class="hero-subtitle">BARBERÍA y TIENDA ONLINE</p>
+        <h1 class="hero-title">PERÚ STYLE</h1>
+        <a href="#reservation" class="btn">RESERVAR CITA</a>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories">
+    <div class="container">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <p class="section-subtitle">Profesionales en cuidado masculino</p>
+        <div class="categories-grid">
+            <div class="category-card">
+                <img src="FOTOS/categoria 1.jpg" alt="Productos">
+                <div class="category-overlay">
+                    <h3>PRODUCTOS</h3>
+                    <p>Cabello, barba y cuidado personal</p>
+                    <a href="#" class="category-btn">VER MÁS</a>
+                </div>
+            </div>
+            <div class="category-card">
+                <img src="FOTOS/categoria 2.jpg" alt="Servicios">
+                <div class="category-overlay">
+                    <h3>SERVICIOS & RESERVAS</h3>
+                    <p>En barbería y peluquería para hombres</p>
+                    <a href="#" class="category-btn">VER MÁS</a>
+                </div>
+            </div>
+            <div class="category-card">
+                <img src="FOTOS/categoria 3.jpg" alt="Accesorios">
+                <div class="category-overlay">
+                    <h3>ACCESORIOS</h3>
+                    <p>Las mejores marcas</p>
+                    <a href="#" class="category-btn">VER MÁS</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="products">
+    <div class="container">
+        <h2 class="section-title">Productos más vendidos</h2>
+        <p class="section-subtitle">Más destacados</p>
+        <div class="products-grid">
+            <!-- PRODUCTO 1 -->
+            <div class="product-card">
+                <div class="product-image" onclick="addToCart('prod1')">
+                    <img src="FOTOS/1.jpg" alt="American Crew 3 in 1">
+                    <div class="add-cart-overlay">
+                        <i class="fas fa-shopping-cart"></i>AGREGAR AL CARRITO
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">American Crew</div>
+                    <h3 class="product-title">American Crew 3 in 1 250ml</h3>
+                    <div class="product-price">S/ 80.00</div>
+                </div>
+            </div>
+            <!-- PRODUCTO 2 -->
+            <div class="product-card">
+                <div class="product-image" onclick="addToCart('prod2')">
+                    <img src="FOTOS/2.jpg" alt="Fortifying Shampoo">
+                    <div class="add-cart-overlay">
+                        <i class="fas fa-shopping-cart"></i>AGREGAR AL CARRITO
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">American Crew</div>
+                    <h3 class="product-title">Fortifying Daily Shampoo 250ml</h3>
+                    <div class="product-price">S/ 80.00</div>
+                </div>
+            </div>
+            <!-- PRODUCTO 3 -->
+            <div class="product-card">
+                <div class="product-image" onclick="addToCart('prod3')">
+                    <span class="badge">Oferta</span>
+                    <img src="FOTOS/3.jpg" alt="Shampoo 450ml">
+                    <div class="add-cart-overlay">
+                        <i class="fas fa-shopping-cart"></i>AGREGAR AL CARRITO
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">American Crew</div>
+                    <h3 class="product-title">Fortifying Daily Shampoo 450ml</h3>
+                    <div class="product-price">
+                        <span class="old-price">S/ 130.00</span>S/ 110.00
+                    </div>
+                </div>
+            </div>
+            <!-- PRODUCTO 4 -->
+            <div class="product-card">
+                <div class="product-image" onclick="addToCart('prod4')">
+                    <span class="badge">Oferta</span>
+                    <img src="FOTOS/4.jpg" alt="Power Cleanser">
+                    <div class="add-cart-overlay">
+                        <i class="fas fa-shopping-cart"></i>AGREGAR AL CARRITO
+                    </div>
+                </div>
+                <div class="product-info">
+                    <div class="product-category">American Crew</div>
+                    <h3 class="product-title">Power Cleanser Style Remover 250ml</h3>
+                    <div class="product-price">
+                        <span class="old-price">S/ 100.00</span>S/ 80.00
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Accessories Section -->
+<section class="accessories" id="accessories">
+    <div class="container">
+        <h2 class="section-title">Accesorios Premium</h2>
+        <p class="section-subtitle">Los mejores accesorios para tu estilo</p>
+        <div class="accessories-grid">
+            <div class="accessory-card">
+                <div class="accessory-img" onclick="addToCart('acc1')" style="cursor:pointer" title="Agregar al carrito">
+                    <img src="FOTOS/Navaja Profesional.webp" alt="Navaja Profesional">
+                </div>
+                <h3>Navajas Profesionales</h3>
+                <p>Navajas de acero inoxidable para un afeitado perfecto</p>
+                <div class="product-price" style="margin-bottom:12px">S/ 89.00</div>
+                <button class="btn-add-acc" onclick="addToCart('acc1')"><i class="fas fa-shopping-cart"></i> Agregar</button>
+            </div>
+            <div class="accessory-card">
+                <div class="accessory-img" onclick="addToCart('acc2')" style="cursor:pointer" title="Agregar al carrito">
+                    <img src="FOTOS/Peine de Madera.jpg" alt="Peine de Madera">
+                </div>
+                <h3>Peines de Madera</h3>
+                <p>Peines antiestáticos de madera natural</p>
+                <div class="product-price" style="margin-bottom:12px">S/ 25.00</div>
+                <button class="btn-add-acc" onclick="addToCart('acc2')"><i class="fas fa-shopping-cart"></i> Agregar</button>
+            </div>
+            <div class="accessory-card">
+                <div class="accessory-img" onclick="addToCart('acc3')" style="cursor:pointer" title="Agregar al carrito">
+                    <img src="FOTOS/Brocha de Afeitar.webp" alt="Brocha de Afeitar">
+                </div>
+                <h3>Brochas de Afeitar</h3>
+                <p>Brochas de pelo de tejón premium</p>
+                <div class="product-price" style="margin-bottom:12px">S/ 120.00</div>
+                <button class="btn-add-acc" onclick="addToCart('acc3')"><i class="fas fa-shopping-cart"></i> Agregar</button>
+            </div>
+            <div class="accessory-card">
+                <div class="accessory-img" onclick="addToCart('acc4')" style="cursor:pointer" title="Agregar al carrito">
+                    <img src="FOTOS/Kit de Cuidado.webp" alt="Kit de Cuidado">
+                </div>
+                <h3>Kit de Cuidado</h3>
+                <p>Set completo para cuidado de barba</p>
+                <div class="product-price" style="margin-bottom:12px">S/ 150.00</div>
+                <button class="btn-add-acc" onclick="addToCart('acc4')"><i class="fas fa-shopping-cart"></i> Agregar</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="gallery" id="gallery">
+    <div class="container">
+        <h2 class="section-title">Galería de Trabajos</h2>
+        <p class="section-subtitle">Conoce nuestro estilo y profesionalismo</p>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="FOTOS/Corte Degradado.jpg" alt="Corte de cabello 1">
+                <div class="gallery-overlay">Corte Degradado</div>
+            </div>
+            <div class="gallery-item">
+                <img src="FOTOS/Corte Clásico.jpg" alt="Corte de cabello 2">
+                <div class="gallery-overlay">Corte Clásico</div>
+            </div>
+            <div class="gallery-item">
+                <img src="FOTOS/Arreglo de Barba.jpg" alt="Arreglo de barba 1">
+                <div class="gallery-overlay">Arreglo de Barba</div>
+            </div>
+            <div class="gallery-item">
+                <img src="FOTOS/Barba Perfilada.jpg" alt="Arreglo de barba 2">
+                <div class="gallery-overlay">Barba Perfilada</div>
+            </div>
+            <div class="gallery-item">
+                <img src="FOTOS/Coloración Moderna.jpg" alt="Coloración">
+                <div class="gallery-overlay">Coloración Moderna</div>
+            </div>
+            <div class="gallery-item">
+                <img src="FOTOS/Afeitado Clásico.webp" alt="Afeitado">
+                <div class="gallery-overlay">Afeitado Clásico</div>
+            </div>
+            <div class="gallery-item">
+                <img src="FOTOS/Nuestro Local.jpg" alt="Local">
+                <div class="gallery-overlay">Nuestro Local</div>
+            </div>
+            <div class="gallery-item">
+                <img src="FOTOS/Nuestro Equipo.jpg" alt="Equipo">
+                <div class="gallery-overlay">Nuestro Equipo</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reservation Section -->
+<section class="reservation" id="reservation">
+    <div class="container">
+        <div class="reservation-container">
+            <div class="reservation-info">
+                <h2>Agenda tu Reserva</h2>
+                <p>En Perú Style, te ofrecemos una experiencia única de barbería. Nuestros profesionales están listos para brindarte el mejor servicio.</p>
+                <ul class="service-list">
+                    <li><i class="fas fa-cut"></i> Corte de cabello moderno y clásico</li>
+                    <li><i class="fas fa-beard"></i> Arreglo y diseño de barba</li>
+                    <li><i class="fas fa-hand-sparkles"></i> Tratamientos faciales</li>
+                    <li><i class="fas fa-hot-tub"></i> Afeitado clásico con toallas calientes</li>
+                    <li><i class="fas fa-tint"></i> Tintes y decoloraciones</li>
+                </ul>
+            </div>
+            <div class="reservation-form">
+
+
+                <div class="success-message" id="successMessage">
+                    <i class="fas fa-check-circle"></i> ¡Reserva confirmada! Se envió un correo de confirmación a tu email.
+                </div>
+                <div class="sending-message" id="sendingMessage">
+                    <span class="spinner"></span> Enviando confirmación por correo...
+                </div>
+                <div class="error-message" id="errorMessage">
+                    <i class="fas fa-exclamation-circle"></i> <span id="errorText">No se pudo enviar el correo. Configura EmailJS correctamente.</span>
+                </div>
+
+                <form id="reservationForm">
+                    <div class="form-group">
+                        <label for="name">Nombre completo *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">Correo electrónico *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Teléfono *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="date">Fecha *</label>
+                            <input type="date" id="date" name="date" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="time">Hora *</label>
+                            <select id="time" name="time" required>
+                                <option value="">Seleccionar hora</option>
+                                <option value="09:00 AM">09:00 AM</option>
+                                <option value="10:00 AM">10:00 AM</option>
+                                <option value="11:00 AM">11:00 AM</option>
+                                <option value="12:00 PM">12:00 PM</option>
+                                <option value="02:00 PM">02:00 PM</option>
+                                <option value="03:00 PM">03:00 PM</option>
+                                <option value="04:00 PM">04:00 PM</option>
+                                <option value="05:00 PM">05:00 PM</option>
+                                <option value="06:00 PM">06:00 PM</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="service">Servicio *</label>
+                        <select id="service" name="service" required>
+                            <option value="">Seleccionar servicio</option>
+                            <option value="Corte de cabello - S/ 35">Corte de cabello - S/ 35</option>
+                            <option value="Arreglo de barba - S/ 25">Arreglo de barba - S/ 25</option>
+                            <option value="Corte + Barba - S/ 55">Corte + Barba - S/ 55</option>
+                            <option value="Afeitado clásico - S/ 40">Afeitado clásico - S/ 40</option>
+                            <option value="Tratamiento facial - S/ 50">Tratamiento facial - S/ 50</option>
+                            <option value="Tinte de cabello - S/ 70">Tinte de cabello - S/ 70</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Comentarios adicionales</label>
+                        <textarea id="message" name="message" rows="3" placeholder="Alguna preferencia o comentario..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-reserve" id="submitBtn">RESERVAR CITA</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <img src="FOTOS/barber shop.jfif" alt="Logo" class="footer-logo">
+                <p>Perú Style<br>946 276 308</p>
+                <div class="social-footer">
+                    <a href="https://api.whatsapp.com/send/?phone=51946276308&text&type=phone_number&app_absent=0" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://www.instagram.com/barber/" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.facebook.com/ArteliBarberShop" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div>
+                <h4>Contáctanos</h4>
+                <p>📞 946 276 308</p>
+                <p>✉️ info@perustyle.pe</p>
+                <p>📍 Lima, Perú</p>
+            </div>
+            <div>
+                <h4>Enlaces</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Tienda</a></li>
+                    <li><a href="#">Cómo llegar</a></li>
+                    <li><a href="#">Barbería</a></li>
+                    <li><a href="#">Peluquería</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Importante</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Libro de Reclamaciones</a></li>
+                    <li><a href="#">Políticas de Privacidad</a></li>
+                    <li><a href="#">Detalle de envío</a></li>
+                    <li><a href="#">Términos y condiciones</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Copyright © 2026 Perú Style. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- WhatsApp Float Button -->
+<a href="https://wa.me/51946276308" class="whatsapp-float" target="_blank">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<script>
+// ============================================================
+// ⚙️  CONFIGURACIÓN EMAILJS — REEMPLAZA ESTOS 3 VALORES
+//     Instrucciones en el banner amarillo del formulario
+// ============================================================
+const EMAILJS_PUBLIC_KEY  = '6bhtvCMVdm39IMMqb';      // ej: "abc123XYZ"
+const EMAILJS_SERVICE_ID  = 'service_yrar8iq';       // ej: "service_xxxxxxx"
+const EMAILJS_TEMPLATE_ID = 'template_8uvyi1h';      // ej: "template_xxxxxxx"
+
+// Inicializar EmailJS
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+
+// ============================================================
+// CATÁLOGO COMPLETO — Productos + Accesorios
+// ============================================================
+const PRODUCTS = {
+    // Productos
+    prod1: { id: 'prod1', name: 'American Crew 3 in 1 250ml',        category: 'American Crew', price: 80,  img: 'FOTOS/1.jpg' },
+    prod2: { id: 'prod2', name: 'Fortifying Daily Shampoo 250ml',     category: 'American Crew', price: 80,  img: 'FOTOS/2.jpg' },
+    prod3: { id: 'prod3', name: 'Fortifying Daily Shampoo 450ml',     category: 'American Crew', price: 110, img: 'FOTOS/3.jpg' },
+    prod4: { id: 'prod4', name: 'Power Cleanser Style Remover 250ml', category: 'American Crew', price: 80,  img: 'FOTOS/4.jpg' },
+    // Accesorios
+    acc1:  { id: 'acc1',  name: 'Navaja Profesional',                 category: 'Accesorios',    price: 89,  img: 'FOTOS/Navaja Profesional.webp' },
+    acc2:  { id: 'acc2',  name: 'Peine de Madera',                    category: 'Accesorios',    price: 25,  img: 'FOTOS/Peine de Madera.jpg' },
+    acc3:  { id: 'acc3',  name: 'Brocha de Afeitar',                  category: 'Accesorios',    price: 120, img: 'FOTOS/Brocha de Afeitar.webp' },
+    acc4:  { id: 'acc4',  name: 'Kit de Cuidado de Barba',            category: 'Accesorios',    price: 150, img: 'FOTOS/Kit de Cuidado.webp' },
+};
+
+// ============================================================
+// CARRITO
+// ============================================================
+let cart = {};
+
+function addToCart(productId) {
+    const product = PRODUCTS[productId];
+    if (!product) return;
+
+    if (cart[productId]) {
+        cart[productId].qty += 1;
+    } else {
+        cart[productId] = { ...product, qty: 1 };
+    }
+
+    renderCart();
+    updateHeaderCount();
+    showToast(`"${product.name}" agregado al carrito`);
+    openCart();
+}
+
+function removeFromCart(productId) {
+    delete cart[productId];
+    renderCart();
+    updateHeaderCount();
+}
+
+function changeQty(productId, delta) {
+    if (!cart[productId]) return;
+    cart[productId].qty += delta;
+    if (cart[productId].qty <= 0) {
+        delete cart[productId];
+    }
+    renderCart();
+    updateHeaderCount();
+}
+
+function clearCart() {
+    cart = {};
+    renderCart();
+    updateHeaderCount();
+}
+
+function renderCart() {
+    const container = document.getElementById('cartItems');
+    const emptyEl   = document.getElementById('cartEmpty');
+    const footer    = document.getElementById('cartFooter');
+    const items     = Object.values(cart);
+
+    if (items.length === 0) {
+        container.innerHTML = '';
+        container.appendChild(emptyEl);
+        emptyEl.style.display = 'block';
+        footer.style.display = 'none';
+        return;
+    }
+
+    emptyEl.style.display = 'none';
+    footer.style.display  = 'block';
+
+    let html = '';
+    let subtotal = 0;
+    let totalQty = 0;
+
+    items.forEach(item => {
+        const lineTotal = item.price * item.qty;
+        subtotal += lineTotal;
+        totalQty += item.qty;
+        html += `
+        <div class="cart-item" id="cartItem_${item.id}">
+            <div class="cart-item-img">
+                <img src="${item.img}" alt="${item.name}">
+            </div>
+            <div class="cart-item-info">
+                <div class="cart-item-cat">${item.category}</div>
+                <h4>${item.name}</h4>
+                <div class="cart-item-controls">
+                    <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+                    <span class="qty-display">${item.qty}</span>
+                    <button class="qty-btn" onclick="changeQty('${item.id}', +1)">+</button>
+                </div>
+            </div>
+            <span class="cart-item-price">S/ ${lineTotal.toFixed(2)}</span>
+            <button class="cart-remove" onclick="removeFromCart('${item.id}')" title="Eliminar">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </div>`;
+    });
+
+    container.innerHTML = html;
+    document.getElementById('cartSubtotal').textContent    = subtotal.toFixed(2);
+    document.getElementById('cartTotalAmount').textContent = subtotal.toFixed(2);
+    document.getElementById('cartItemCount').textContent   = totalQty;
+}
+
+function updateHeaderCount() {
+    const total = Object.values(cart).reduce((s, i) => s + i.qty, 0);
+    const countEl = document.getElementById('headerCartCount');
+    countEl.textContent = total;
+    countEl.classList.remove('bounce');
+    void countEl.offsetWidth; // reflow
+    countEl.classList.add('bounce');
+}
+
+function openCart() {
+    document.getElementById('cartSidebar').classList.add('open');
+    document.getElementById('cartOverlay').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeCart() {
+    document.getElementById('cartSidebar').classList.remove('open');
+    document.getElementById('cartOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function proceedCheckout() {
+    const items = Object.values(cart);
+    if (items.length === 0) return;
+
+    const lines = items.map(i => `• ${i.name} x${i.qty} = S/ ${(i.price * i.qty).toFixed(2)}`).join('\n');
+    const total = items.reduce((s, i) => s + i.price * i.qty, 0).toFixed(2);
+    alert(`🛒 RESUMEN DE PEDIDO\n\n${lines}\n\nTOTAL: S/ ${total}\n\nPara finalizar la compra contáctanos por WhatsApp:\n📱 946 276 308`);
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer = null;
+
+function showToast(msg) {
+    const el = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    el.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ============================================================
+// HEADER SCROLL
+// ============================================================
+window.addEventListener('scroll', function() {
+    const header = document.getElementById('header');
+    if (window.scrollY > 100) header.classList.add('header-scrolled');
+    else header.classList.remove('header-scrolled');
+});
+
+// ============================================================
+// RESERVAS — FORMULARIO CON EMAILJS
+// ============================================================
+const today = new Date().toISOString().split('T')[0];
+const dateInput = document.getElementById('date');
+if (dateInput) dateInput.min = today;
+
+document.getElementById('reservationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const name    = document.getElementById('name').value.trim();
+    const email   = document.getElementById('email').value.trim();
+    const phone   = document.getElementById('phone').value.trim();
+    const date    = document.getElementById('date').value;
+    const time    = document.getElementById('time').value;
+    const service = document.getElementById('service').value;
+    const message = document.getElementById('message').value.trim();
+
+    const formattedDate = new Date(date + 'T12:00:00').toLocaleDateString('es-ES', {
+        weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+
+    // Ocultar mensajes anteriores
+    ['successMessage','errorMessage','sendingMessage'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+    });
+
+    // Mostrar "enviando"
+    document.getElementById('sendingMessage').style.display = 'block';
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>ENVIANDO...';
+
+    // Parámetros que debes mapear en tu EmailJS Template con {{variable}}
+    const templateParams = {
+        to_email:       email,
+        to_name:        name,
+        client_phone:   phone,
+        booking_date:   formattedDate,
+        booking_time:   time,
+        booking_service:service,
+        client_message: message || 'Ninguno',
+        barbershop_name:'Perú Style',
+        barbershop_phone:'946 276 308',
+        barbershop_address:'Lima, Perú',
+    };
+
+    try {
+        if (EMAILJS_SERVICE_ID === 'TU_SERVICE_ID') {
+            // Modo demo: simular envío si no está configurado
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            throw new Error('EmailJS no configurado — modo demo');
+        }
+
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+
+        document.getElementById('sendingMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+        this.reset();
+
+    } catch (err) {
+        document.getElementById('sendingMessage').style.display = 'none';
+
+        if (err.message && err.message.includes('no configurado')) {
+            // Mostrar confirmación visual aunque no haya EmailJS
+            document.getElementById('errorText').innerHTML =
+                '⚙️ EmailJS no configurado aún. <a href="https://www.emailjs.com" target="_blank">Configúralo aquí</a> para envío real de correos. La reserva fue registrada.';
+            document.getElementById('errorMessage').style.background = '#e67e22';
+            document.getElementById('errorMessage').style.display = 'block';
+            this.reset();
+        } else {
+            document.getElementById('errorText').textContent = 'Error al enviar el correo: ' + (err.text || err.message || 'Verifica tu configuración EmailJS.');
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'RESERVAR CITA';
+        setTimeout(() => {
+            ['successMessage','errorMessage'].forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+        }, 7000);
+    }
+});
+
+// ============================================================
+// SMOOTH SCROLL
+// ============================================================
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+});
+
+// Init cart display
+updateHeaderCount();
+</script>
+
+<!-- ============================================================ -->
+<!--  📧  GUÍA COMPLETA EMAILJS — COPIA ESTE TEMPLATE DE CORREO  -->
+<!-- ============================================================ -->
+<!--
+
+╔══════════════════════════════════════════════════════════════╗
+║          PASO A PASO: CONFIGURAR EMAILJS (GRATIS)           ║
+╚══════════════════════════════════════════════════════════════╝
+
+1. Ve a https://www.emailjs.com y crea tu cuenta gratis
+2. Ve a "Email Services" → "Add New Service" → elige Gmail
+   → Conecta tu cuenta de Gmail → Copia el "Service ID"
+3. Ve a "Email Templates" → "Create New Template"
+4. COPIA ESTE TEMPLATE EXACTAMENTE (pega el HTML en el editor):
+   (cambia a la pestaña "HTML Editor" en EmailJS)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SUBJECT: ✂️ Confirmación de Reserva — {{barbershop_name}}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BODY (HTML — pega esto en el HTML Editor de EmailJS):
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  body { margin:0; padding:0; background:#f4f4f4; font-family:'Poppins',Arial,sans-serif; }
+  .wrap { max-width:600px; margin:30px auto; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+  .top-bar { background:#1a1a1a; height:8px; }
+  .header { background:#1a1a1a; padding:32px 40px; text-align:center; }
+  .header h1 { color:#fc7978; font-size:28px; margin:0; letter-spacing:2px; }
+  .header p { color:#aaa; font-size:13px; margin:6px 0 0; }
+  .body { padding:36px 40px; }
+  .greeting { font-size:17px; color:#222; margin-bottom:20px; }
+  .card { background:#f8f9fa; border-left:4px solid #fc7978; border-radius:10px; padding:20px 24px; margin-bottom:24px; }
+  .card-title { font-size:11px; text-transform:uppercase; letter-spacing:2px; color:#fc7978; font-weight:700; margin-bottom:14px; }
+  .row { display:flex; align-items:flex-start; margin-bottom:12px; gap:12px; }
+  .row:last-child { margin-bottom:0; }
+  .icon { font-size:18px; min-width:24px; }
+  .label { font-size:11px; color:#999; text-transform:uppercase; letter-spacing:1px; }
+  .value { font-size:15px; color:#222; font-weight:600; margin-top:2px; }
+  .divider { height:1px; background:#eee; margin:24px 0; }
+  .note { background:#fff8f0; border:1px solid #fde8d8; border-radius:10px; padding:16px 20px; font-size:13px; color:#7a4f2d; line-height:1.6; }
+  .note strong { color:#fc7978; }
+  .footer { background:#1a1a1a; padding:28px 40px; text-align:center; }
+  .footer p { color:#666; font-size:12px; margin:4px 0; }
+  .footer a { color:#fc7978; text-decoration:none; }
+  .scissors { font-size:32px; margin-bottom:10px; display:block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-bar"></div>
+  <div class="header">
+    <span class="scissors">✂️</span>
+    <h1>{{barbershop_name}}</h1>
+    <p>BARBERÍA PROFESIONAL · LIMA, PERÚ</p>
+  </div>
+  <div class="body">
+    <p class="greeting">Hola, <strong>{{to_name}}</strong> 👋</p>
+    <p style="color:#555;font-size:14px;margin-bottom:24px">Tu reserva ha sido confirmada exitosamente. Aquí están todos los detalles de tu cita:</p>
+
+    <div class="card">
+      <div class="card-title">📋 Detalles de la Reserva</div>
+      <div class="row">
+        <span class="icon">📅</span>
+        <div><div class="label">Fecha</div><div class="value">{{booking_date}}</div></div>
+      </div>
+      <div class="row">
+        <span class="icon">⏰</span>
+        <div><div class="label">Hora</div><div class="value">{{booking_time}}</div></div>
+      </div>
+      <div class="row">
+        <span class="icon">💇</span>
+        <div><div class="label">Servicio</div><div class="value">{{booking_service}}</div></div>
+      </div>
+      <div class="row">
+        <span class="icon">📞</span>
+        <div><div class="label">Teléfono de contacto</div><div class="value">{{client_phone}}</div></div>
+      </div>
+      <div class="row">
+        <span class="icon">💬</span>
+        <div><div class="label">Comentarios</div><div class="value">{{client_message}}</div></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <strong>📍 Cómo llegar:</strong><br>
+      {{barbershop_address}}<br><br>
+      <strong>📞 Contáctanos:</strong> {{barbershop_phone}}<br><br>
+      ⏰ <strong>Importante:</strong> Te pedimos llegar 5 minutos antes de tu cita. Si necesitas cancelar o reprogramar, contáctanos con al menos 2 horas de anticipación.
+    </div>
+
+    <div class="divider"></div>
+    <p style="font-size:14px;color:#555;text-align:center">¡Gracias por elegirnos! Esperamos verte pronto 💈</p>
+  </div>
+  <div class="footer">
+    <p><strong style="color:#fc7978">{{barbershop_name}}</strong></p>
+    <p>{{barbershop_address}} · {{barbershop_phone}}</p>
+    <p style="margin-top:10px;font-size:11px;color:#444">Este correo fue generado automáticamente. Por favor no respondas a este mensaje.</p>
+  </div>
+</div>
+</body>
+</html>
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+5. En EmailJS → Template Settings → "To Email": {{to_email}}
+   "From Name": {{barbershop_name}}
+   "Reply To": (deja vacío o pon tu correo)
+
+6. Copia el Template ID → pégalo en EMAILJS_TEMPLATE_ID abajo
+
+7. Ve a "Account" → copia tu Public Key → pégalo en EMAILJS_PUBLIC_KEY
+
+8. Reemplaza en el JS:
+   const EMAILJS_PUBLIC_KEY  = '6bhtvCMVdm39IMMqb';
+   const EMAILJS_SERVICE_ID  = 'service_yrar8iq';
+   const EMAILJS_TEMPLATE_ID = 'template_8uvyi1h';
+
+✅ ¡Listo! El formulario enviará correos automáticamente.
+
+-->
+</body>
+</html>
